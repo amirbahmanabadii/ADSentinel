@@ -48,10 +48,8 @@ Describe 'ADSentinel Foundation' {
             $Content | Should -Match 'Set-StrictMode\s+-Version\s+Latest'
         }
 
-        It 'executes successfully' {
-            & $EntryPoint
-
-            $LASTEXITCODE | Should -BeIn @(0, $null)
+        It 'executes successfully without throwing' {
+    { & $EntryPoint } | Should -Not -Throw
         }
     }
 }

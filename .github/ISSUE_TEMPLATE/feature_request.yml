@@ -1,0 +1,114 @@
+name: Feature Request
+description: Propose a new capability or improvement for ADSentinel
+title: "[Feature]: "
+labels:
+  - enhancement
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for proposing an improvement to ADSentinel.
+
+        Please describe the problem first and then explain the proposed solution.
+
+        Do not include confidential Active Directory or organizational infrastructure information.
+
+  - type: checkboxes
+    id: security-check
+    attributes:
+      label: Sensitive information check
+      options:
+        - label: I have removed or sanitized all confidential infrastructure information.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What problem, limitation, or administrative task should this feature address?
+      placeholder: Describe the operational or technical problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe how you think ADSentinel should address the problem.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Project area
+      description: Which part of ADSentinel would this feature primarily affect?
+      options:
+        - Domain Discovery
+        - Domain Controllers
+        - Replication
+        - DNS
+        - Computers
+        - Users
+        - Group Policy
+        - Security Audit
+        - Event Logs
+        - Reporting
+        - Configuration
+        - Logging
+        - Testing
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Expected output or behavior
+      description: Describe the expected result, structured data, report, or CLI behavior.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies or platform requirements
+      description: |
+        List any known Windows, Active Directory, PowerShell, RSAT,
+        networking, or other technical dependencies.
+
+  - type: textarea
+    id: security
+    attributes:
+      label: Security considerations
+      description: |
+        Describe possible permissions, credential, privacy, data exposure,
+        or infrastructure safety implications.
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing considerations
+      description: Explain how this capability could be validated or tested in a lab environment.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe alternative approaches or existing tools you considered.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other sanitized technical information relevant to the proposal.
+
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Validation
+      options:
+        - label: I searched existing issues before submitting this feature request.
+          required: true
+        - label: This proposal does not contain credentials or confidential infrastructure information.
+          required: true

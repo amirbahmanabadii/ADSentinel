@@ -1,0 +1,107 @@
+name: Bug Report
+description: Report a reproducible problem in ADSentinel
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve ADSentinel.
+
+        Before submitting this report, remove or sanitize all sensitive Active Directory and organizational information.
+
+  - type: checkboxes
+    id: security-check
+    attributes:
+      label: Sensitive information check
+      description: Confirm that the report contains no sensitive infrastructure information.
+      options:
+        - label: I have removed or sanitized credentials, domain names, usernames, server names, IP addresses, logs, and other internal infrastructure details.
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: ADSentinel version or commit
+      description: Provide the ADSentinel version or Git commit where the problem occurs.
+      placeholder: "Example: 0.1.0-dev or commit SHA"
+    validations:
+      required: true
+
+  - type: input
+    id: powershell
+    attributes:
+      label: PowerShell version
+      placeholder: "Example: PowerShell 7.6.6"
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      placeholder: "Example: Windows Server 2025"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem description
+      description: Clearly describe the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest reproducible sequence of steps.
+      placeholder: |
+        1. Run ...
+        2. Configure ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect ADSentinel to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs or error output
+      description: |
+        Include relevant output only after removing credentials, internal domain names,
+        usernames, server names, IP addresses, and other sensitive information.
+      render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other sanitized information that may help reproduce the issue.
+
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Validation
+      options:
+        - label: I searched existing issues before creating this report.
+          required: true
+        - label: I can reproduce this issue with the information provided above.
+          required: true

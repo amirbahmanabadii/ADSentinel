@@ -1,0 +1,61 @@
+name: ADSentinel CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: PowerShell Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Display PowerShell version
+        shell: pwsh
+        run: |
+          $PSVersionTable
+
+      - name: Install PowerShell development modules
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+          Install-Module Pester `
+            -MinimumVersion 6.0 `
+            -Scope CurrentUser `
+            -Force `
+            -SkipPublisherCheck
+
+          Install-Module PSScriptAnalyzer `
+            -Scope CurrentUser `
+            -Force
+
+      - name: Display installed module versions
+        shell: pwsh
+        run: |
+          Get-Module Pester -ListAvailable |
+            Sort-Object Version -Descending |
+            Select-Object -First 1 Name, Version, Path
+
+          Get-Module PSScriptAnalyzer -ListAvailable |
+            Sort-Object Version -Descending |
+            Select-Object -First 1 Name, Version, Path
+
+      - name: Run ADSentinel validation
+        shell: pwsh
+        run: |
+          ./scripts/Test.ps1
