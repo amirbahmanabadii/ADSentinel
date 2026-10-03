@@ -1,0 +1,28 @@
+{
+  "application": {
+    "name": "ADSentinel",
+    "environment": "production"
+  },
+  "discovery": {
+    "domain": "auto",
+    "includeDomainControllers": true,
+    "includeComputers": true,
+    "includeUsers": true
+  },
+  "healthChecks": {
+    "dns": true,
+    "replication": true,
+    "groupPolicy": true,
+    "eventLogs": true,
+    "securityAudit": true
+  },
+  "reporting": {
+    "html": true,
+    "csv": true,
+    "json": true
+  },
+  "logging": {
+    "enabled": true,
+    "level": "Information"
+  }
+}
