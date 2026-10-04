@@ -69,9 +69,40 @@ Write-Output '[3/4] Running PSScriptAnalyzer...'
 
 Import-Module PSScriptAnalyzer -ErrorAction Stop
 
-$AnalyzerResults = @(
-    Invoke-ScriptAnalyzer -Path $SourcePath -Recurse
-)
+$AnalyzerErrors = @()
+$AnalyzerResults = @()
+
+$SourceFiles = Get-ChildItem `
+    -Path $SourcePath `
+    -Recurse `
+    -File |
+    Where-Object Extension -In '.ps1', '.psm1', '.psd1'
+
+foreach ($File in $SourceFiles) {
+    try {
+        $FileResults = @(
+            Invoke-ScriptAnalyzer `
+                -Path $File.FullName `
+                -ErrorAction Stop
+        )
+
+        $AnalyzerResults += $FileResults
+    }
+    catch {
+        $AnalyzerErrors += [PSCustomObject]@{
+            File      = $File.FullName
+            Exception = $_.Exception.Message
+        }
+    }
+}
+
+if ($AnalyzerErrors.Count -gt 0) {
+    $AnalyzerErrors |
+        Format-Table File, Exception -Wrap -AutoSize
+
+    Write-Error "PSScriptAnalyzer failed while analyzing $($AnalyzerErrors.Count) file(s)."
+    exit 1
+}
 
 if ($AnalyzerResults.Count -gt 0) {
     $AnalyzerResults |
@@ -81,7 +112,7 @@ if ($AnalyzerResults.Count -gt 0) {
     exit 1
 }
 
-Write-Output '[PASS] PSScriptAnalyzer reported 0 issues.'
+Write-Output "[PASS] PSScriptAnalyzer analyzed $($SourceFiles.Count) file(s) with 0 issues."
 
 Write-Output ''
 Write-Output '[4/4] Running Pester unit tests...'
