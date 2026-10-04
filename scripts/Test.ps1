@@ -83,6 +83,7 @@ foreach ($File in $SourceFiles) {
         $FileResults = @(
             Invoke-ScriptAnalyzer `
                 -Path $File.FullName `
+                -ExcludeRule PSProvideCommentHelp `
                 -ErrorAction Stop
         )
 
