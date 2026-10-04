@@ -25,7 +25,14 @@ function Get-ADSentinelDomainDiscovery {
 
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
-    param()
+    param(
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$Server,
+
+        [Parameter()]
+        [System.Management.Automation.PSCredential]$Credential
+    )
 
     if (-not $IsWindows) {
         throw [System.PlatformNotSupportedException]::new(
@@ -48,14 +55,39 @@ function Get-ADSentinelDomainDiscovery {
     try {
         Import-Module ActiveDirectory -ErrorAction Stop
 
-        $Domain = Get-ADDomain -ErrorAction Stop
-        $Forest = Get-ADForest -ErrorAction Stop
+        $ADParameters = @{
+            ErrorAction = 'Stop'
+        }
+
+        if ($PSBoundParameters.ContainsKey('Server')) {
+            $ADParameters.Server = $Server
+        }
+
+        if ($PSBoundParameters.ContainsKey('Credential')) {
+            $ADParameters.Credential = $Credential
+        }
+
+        $Domain = Get-ADDomain @ADParameters
+        $Forest = Get-ADForest @ADParameters
+
+        $DomainControllerParameters = @{
+            Filter      = '*'
+            ErrorAction = 'Stop'
+        }
+
+        if ($PSBoundParameters.ContainsKey('Credential')) {
+            $DomainControllerParameters.Credential = $Credential
+        }
+
+        if ($PSBoundParameters.ContainsKey('Server')) {
+            $DomainControllerParameters.Server = $Server
+        }
+        else {
+            $DomainControllerParameters.Server = $Domain.DNSRoot
+        }
 
         $DomainControllers = @(
-            Get-ADDomainController `
-                -Filter * `
-                -Server $Domain.DNSRoot `
-                -ErrorAction Stop
+            Get-ADDomainController @DomainControllerParameters
         )
 
         $GlobalCatalogs = @(
@@ -73,26 +105,26 @@ function Get-ADSentinelDomainDiscovery {
         )
 
         [PSCustomObject][ordered]@{
-            DomainName              = $Domain.DNSRoot
-            NetBIOSName             = $Domain.NetBIOSName
-            DomainMode              = $Domain.DomainMode.ToString()
-            DomainSID               = $Domain.DomainSID.ToString()
+            DomainName           = $Domain.DNSRoot
+            NetBIOSName          = $Domain.NetBIOSName
+            DomainMode           = $Domain.DomainMode.ToString()
+            DomainSID            = $Domain.DomainSID.ToString()
 
-            ForestName              = $Forest.Name
-            ForestMode              = $Forest.ForestMode.ToString()
-            RootDomain              = $Forest.RootDomain
+            ForestName           = $Forest.Name
+            ForestMode           = $Forest.ForestMode.ToString()
+            RootDomain           = $Forest.RootDomain
 
-            SchemaMaster            = $Forest.SchemaMaster
-            DomainNamingMaster      = $Forest.DomainNamingMaster
-            PDCEmulator             = $Domain.PDCEmulator
-            RIDMaster               = $Domain.RIDMaster
-            InfrastructureMaster    = $Domain.InfrastructureMaster
+            SchemaMaster         = $Forest.SchemaMaster
+            DomainNamingMaster   = $Forest.DomainNamingMaster
+            PDCEmulator          = $Domain.PDCEmulator
+            RIDMaster            = $Domain.RIDMaster
+            InfrastructureMaster = $Domain.InfrastructureMaster
 
-            DomainControllerCount   = $DomainControllers.Count
-            GlobalCatalogCount      = $GlobalCatalogs.Count
-            Sites                   = $Sites
+            DomainControllerCount = $DomainControllers.Count
+            GlobalCatalogCount    = $GlobalCatalogs.Count
+            Sites                 = $Sites
 
-            DiscoveryTimeUtc        = [DateTime]::UtcNow
+            DiscoveryTimeUtc = [DateTime]::UtcNow
         }
     }
     catch {
